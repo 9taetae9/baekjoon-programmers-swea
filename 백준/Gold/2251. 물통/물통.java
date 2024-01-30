@@ -8,7 +8,7 @@ class State{
     int[] X;
     State(int[] _X){
         X = new int[3];
-        for(int i=0; i<3; i++) X[i] = _X[i];
+        System.arraycopy(_X, 0, X, 0, 3);
     }
 
     State move(int from, int to, int[] Limit){
@@ -35,10 +35,10 @@ public class Main{
         visit = new boolean[205][205][205];
         possible = new boolean[205];
     }
-    static void bfs(int x1, int x2, int x3){
+    static void bfs( int x3){
         Queue<State> que = new LinkedList<>();
-        visit[x1][x2][x3] = true;
-        que.add(new State(new int[]{x1,x2,x3}));
+        visit[0][0][x3] = true;
+        que.add(new State(new int[]{0, 0,x3}));
 
         while(!que.isEmpty()){
             State st = que.poll();
@@ -58,7 +58,7 @@ public class Main{
     }
 
     static void pro(){
-        bfs(0,0,Limit[2]);
+        bfs(Limit[2]);
 
         for(int i=0; i<=Limit[2]; i++){
             if(possible[i]) sb.append(i).append(' ');
