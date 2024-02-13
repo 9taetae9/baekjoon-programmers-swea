@@ -1,44 +1,44 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-    static long[][] memo;
-    public static void main(String[] args) {
+    public void solution() throws IOException {
 
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int[][] board = new int[N][N];
-        memo = new long[N][N];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
-        for(int i=0; i<N; i++){
-            for(int j=0; j<N; j++){
-                board[i][j] = sc.nextInt();
-                memo[i][j] = -1;
+        st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+
+        int[][] arr= new int[n][n];
+        for(int i=0; i<n; i++){
+            st = new StringTokenizer(br.readLine());
+            for(int j=0; j<n; j++){
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        System.out.println(jump(board, 0, 0));
 
+        long[][] dp = new long[n][n];
+        dp[0][0] = 1;
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(dp[i][j]>0 && arr[i][j]>0){
+                    int jump = arr[i][j];
+                    if(i+jump < n)
+                        dp[i+jump][j] += dp[i][j];
+                    if(j+jump < n)
+                        dp[i][j+jump] += dp[i][j];
+                }
+            }
+        }
+
+        System.out.println(dp[n-1][n-1]);
     }
-    public static long jump(int[][] arr, int i, int j){
-        if(i == arr.length-1 && j == arr.length-1  ) {
-            return 1;
-        }
-
-        if(memo[i][j] != -1){
-            return memo[i][j];
-        }
-
-        memo[i][j] = 0;
-
-
-        if(i+arr[i][j] < arr.length) {
-            memo[i][j]+=jump(arr, i+arr[i][j], j);
-        }
-
-        if(j+arr[i][j] < arr.length) {
-            memo[i][j] += jump(arr, i, j + arr[i][j]);
-        }
-
-        return memo[i][j];
+    public static void main(String[] args) throws Exception {
+        new Main().solution();
     }
 
 }
