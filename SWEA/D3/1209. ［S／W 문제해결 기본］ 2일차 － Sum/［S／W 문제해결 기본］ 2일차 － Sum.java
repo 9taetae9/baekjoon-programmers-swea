@@ -72,34 +72,17 @@ class Solution
                 }
             }
             
-			
-            for(int i=0; i < 100; i++){
-                int sum = 0;
+			for(int i=0; i < 100; i++){
                 for(int j=0; j < 100; j++){
-                    sum+= arr[i][j];
+                    sums[i] += arr[i][j];
+                    sums[100+j] += arr[i][j];
+                    if(i == j) 
+                        sums[200] += arr[i][j];
+                    if(i+j == 99) 
+                        sums[201] += arr[i][j];
                 }
-                sums[i] = sum;
             }
-            
-            for(int j=0; j < 100; j++){
-                int sum = 0;
-                for(int i=0; i < 100; i++){
-                    sum += arr[i][j];
-                }
-                sums[100+j] = sum;
-            }
-            
-            int sum = 0;
-            for(int i=0; i < 100; i++){
-                sum += arr[i][i];
-            }
-            sums[200] = sum;
-            
-            sum = 0;
-            for(int i=0; i < 100; i++){
-            	sum += arr[i][99-i]; 
-            }
-            sums[201] = sum;
+           
             
             Arrays.sort(sums);
             
