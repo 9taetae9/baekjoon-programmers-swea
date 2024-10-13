@@ -7,8 +7,10 @@ class Solution
 	{
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
 		int T= Integer.parseInt(br.readLine());
-
+        
+		StringBuilder sb = new StringBuilder();
 		for(int test_case = 1; test_case <= T; test_case++)
 		{
 			StringTokenizer st = new StringTokenizer(br.readLine());
@@ -24,20 +26,19 @@ class Solution
             	calorie[i] = Integer.parseInt(st.nextToken());
             }
             
-            int[][] dp = new int[N+1][L+1];
+            int[] dp = new int[L+1];
             
             for(int i=1; i <= N; i++){
-                for(int j=0; j <= L; j++){
-                    if(calorie[i] <= j){
-                        dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-calorie[i]] + taste[i]);
-                    }else{
-                        dp[i][j] = dp[i-1][j];
-                    }
+                for(int j = L; j >= calorie[i]; j--){
+                    dp[j] = Math.max(dp[j], dp[j - calorie[i]] + taste[i]); // 이전 단계 최적(현재 i 선택 x) vs [j- 현재 i 음식 칼로리] 한 상태의 최적  + 현재 i 점수
                 }
             }
             
-            System.out.println("#"+ test_case+ " " + dp[N][L]);
+            
+            sb.append("#").append(test_case).append(" ").append(dp[L]).append("\n");
             
 		}
+        
+        System.out.print(sb);
 	}
 }
