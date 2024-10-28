@@ -30,13 +30,14 @@ public class Main {
             }
         }
 
-
-
+        StringBuilder sb = new StringBuilder();
         for(int[] g : G){
             for(int r : g){
-                System.out.print(r+" ");
+                sb.append(r).append(" ");
             }
-            System.out.println();
+            sb.append("\n");
         }
+        System.out.print(sb);
+        
     }
 }
