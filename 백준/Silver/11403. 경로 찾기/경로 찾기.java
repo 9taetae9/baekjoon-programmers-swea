@@ -20,13 +20,17 @@ public class Main {
 
         for(int n=0; n < N; n++) { //거처가는 노드 n
             for (int i = 0; i < N; i++) {
-                for (int j = 0; j < N; j++) {
-                    if(G[i][n] == 1 && G[n][j] == 1){//i->n && n->j => i->j
-                        G[i][j] = 1;
+                if(G[i][n] == 1) { //i->n 이 1이 아니면 skip
+                    for (int j = 0; j < N; j++) {
+                        if (G[i][j] == 0 && G[n][j] == 1) {// i->j 이 이미 1이면 skip, n->j이 1이면 i->j 는 1
+                            G[i][j] = 1;
+                        }
                     }
                 }
             }
         }
+
+
 
         for(int[] g : G){
             for(int r : g){
