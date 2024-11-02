@@ -27,30 +27,14 @@ public class Main {
             for (int i = 0; i < H.length; i++) {
                 if(i == k) continue;
                 for (int j = 0; j < H.length; j++) {
-                    if(H[i][j] == 1 && H[j][k] == 1){ // j가 i보다 크고, k가 j보다 크면 => k는 i보다 큼
-                        H[i][k] = 1;
-                    } else if(H[i][j] == -1 && H[j][k] == -1){ // j가 i보다 작고, k가 j보다 작으면 => k는 i보다 작음
-                        H[i][k] = -1;
+                    if(H[i][k] == 1 && H[k][j] == 1){ // j가 i보다 크고, k가 j보다 크면 => k는 i보다 큼
+                        H[i][j] = 1;
+                    } else if(H[i][k] == -1 && H[k][j] == -1){ // j가 i보다 작고, k가 j보다 작으면 => k는 i보다 작음
+                        H[i][j] = -1;
                     }
                 }
             }
         }
-
-        for(int k=0; k < H.length; k++) {
-            for (int i = 0; i < H.length; i++) {
-                if(i == k) continue;
-                for (int j = 0; j < H.length; j++) {
-                    if(H[i][j] == 1 && H[j][k] == 1){ // j가 i보다 크고, k가 j보다 크면 => k는 i보다 큼
-                        H[i][k] = 1;
-                    } else if(H[i][j] == -1 && H[j][k] == -1){ // j가 i보다 작고, k가 j보다 작으면 => k는 i보다 작음
-                        H[i][k] = -1;
-                    }
-                }
-            }
-        }
-
-
-
 
         //자신보다 큰 사람은 1, 작은사람은 -1로 저장되어있음
         //0인 경우 => 자기 자신 or 키 비교를 못하는 경우
