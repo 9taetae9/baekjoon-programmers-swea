@@ -2,18 +2,19 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static class Edge{
+
+    static class Edge {
         int to;
         int weight;
 
-        public Edge(int to, int weight){
+        public Edge(int to, int weight) {
             this.to = to;
             this.weight = weight;
         }
     }
 
-    static ArrayList<Edge>[] graph;
     static int N, M;
+    static ArrayList<Edge>[] graph;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -22,34 +23,34 @@ public class Main {
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
+
         graph = new ArrayList[N];
-        for(int i=0; i<N; i++){
+        for (int i = 0; i < graph.length; i++) {
             graph[i] = new ArrayList<>();
         }
 
-        for(int i=0; i<N-1; i++){
+        for (int i = 0; i < N - 1; i++) {
             st = new StringTokenizer(br.readLine());
-            int from = Integer.parseInt(st.nextToken()) - 1;
-            int to = Integer.parseInt(st.nextToken()) - 1;
+            int v1 = Integer.parseInt(st.nextToken()) - 1;
+            int v2 = Integer.parseInt(st.nextToken()) - 1;
             int weight = Integer.parseInt(st.nextToken());
 
-            graph[from].add(new Edge(to, weight));
-            graph[to].add(new Edge(from, weight)); // 간선 양방향으로 연결
+            graph[v1].add(new Edge(v2, weight));
+            graph[v2].add(new Edge(v1, weight));
         }
 
         StringBuilder sb = new StringBuilder();
-        for(int i=0; i<M; i++){
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken())-1;
-            int end = Integer.parseInt(st.nextToken())-1;
-
-            sb.append(checkDistance(start, end)).append("\n");
+            int v1 = Integer.parseInt(st.nextToken()) - 1;
+            int v2 = Integer.parseInt(st.nextToken()) - 1;
+            sb.append(getDistance(v1, v2)).append("\n");
         }
 
-        System.out.println(sb);
+        System.out.print(sb);
     }
 
-    private static int checkDistance(int start, int end){
+    static private int getDistance(int start, int end) {
         int[] distance = new int[N];
         Arrays.fill(distance, -1);
         distance[start] = 0;
@@ -57,15 +58,17 @@ public class Main {
         Queue<Integer> queue = new LinkedList<>();
         queue.offer(start);
 
-        while(!queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             int currentNode = queue.poll();
 
-            if(currentNode == end) return distance[currentNode];
+            if (currentNode == end) {
+                return distance[currentNode];
+            }
 
-            for(Edge next : graph[currentNode]){
-                if(distance[next.to] == -1) { // 방문하지 않았던 노드만 방문
-                    distance[next.to] = distance[currentNode] + next.weight;
-                    queue.offer(next.to);
+            for (Edge e : graph[currentNode]) {
+                if (distance[e.to] == -1) {
+                    distance[e.to] = distance[currentNode] + e.weight;
+                    queue.offer(e.to);
                 }
             }
         }
