@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 
 public class Main {
     static int N, M;
-    static int[][] H;
+    static boolean[][] H;
     static boolean[] visited;
 
     public static void main(final String[] args) throws NumberFormatException, IOException {
@@ -13,14 +13,14 @@ public class Main {
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-        H = new int[N][N];
+        H = new boolean[N][N];
         visited = new boolean[N];
 
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
             final int u1 = Integer.parseInt(st.nextToken());
             final int u2 = Integer.parseInt(st.nextToken());
-            H[u1-1][u2-1] = 1;
+            H[u1-1][u2-1] = true;
         }
 
         for (int i = 0; i < N; i++) {
@@ -33,7 +33,7 @@ public class Main {
         for (int i = 0; i < N; i++) {
             int sum = 0;
             for (int j = 0; j < N; j++) {
-                sum += H[i][j] + H[j][i];
+                if(H[i][j] ||H[j][i]) sum++;
             }
             if (sum == N - 1)
                 answer++;
@@ -47,10 +47,12 @@ public class Main {
             return;
 
         for (int i = 0; i < N; i++) {
-            if (H[s][i]==1) {
+            if (H[s][i]) {
                 dfs(i);
                 for (int j = 0; j < N; j++) {
-                    H[s][j] = H[s][j] | H[i][j];  //비트 연산으로 누적 경로(키 관계) 갱신
+                    if(!H[s][j] && H[i][j]) {
+                        H[s][j] = H[i][j];  //비트 연산으로 누적 경로(키 관계) 갱신
+                    }
                 }
             }
         }
