@@ -2,77 +2,109 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+    static int N, M;
+    static ArrayList<Edge>[] graph;
+    static int[] depth;
+    static int[][] parent;
+    static int[][] distance;
+    static int maxLevel;
 
     static class Edge {
-        int to;
-        int weight;
+        int to, weight;
 
-        public Edge(int to, int weight) {
+        Edge(int to, int weight) {
             this.to = to;
             this.weight = weight;
         }
     }
 
-    static int N, M;
-    static ArrayList<Edge>[] graph;
-
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-
-        graph = new ArrayList[N];
-        for (int i = 0; i < graph.length; i++) {
+        graph = new ArrayList[N + 1];
+        for (int i = 1; i <= N; i++) {
             graph[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < N - 1; i++) {
             st = new StringTokenizer(br.readLine());
-            int v1 = Integer.parseInt(st.nextToken()) - 1;
-            int v2 = Integer.parseInt(st.nextToken()) - 1;
-            int weight = Integer.parseInt(st.nextToken());
-
-            graph[v1].add(new Edge(v2, weight));
-            graph[v2].add(new Edge(v1, weight));
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            graph[a].add(new Edge(b, w));
+            graph[b].add(new Edge(a, w));
         }
+
+        maxLevel = (int) (Math.log(N) / Math.log(2));
+        depth = new int[N + 1];
+        parent = new int[N + 1][maxLevel + 1];
+        distance = new int[N + 1][maxLevel + 1];
+
+        dfs(1, 0, 0);
+        fillParent();
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int v1 = Integer.parseInt(st.nextToken()) - 1;
-            int v2 = Integer.parseInt(st.nextToken()) - 1;
-            sb.append(getDistance(v1, v2)).append("\n");
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            sb.append(getDistance(a, b)).append("\n");
         }
 
         System.out.print(sb);
     }
 
-    static private int getDistance(int start, int end) {
-        int[] distance = new int[N];
-        Arrays.fill(distance, -1);
-        distance[start] = 0;
+    static void dfs(int node, int parent, int dist) {
+        depth[node] = depth[parent] + 1;
+        Main.parent[node][0] = parent;
+        distance[node][0] = dist;
 
-        Queue<Integer> queue = new LinkedList<>();
-        queue.offer(start);
-
-        while (!queue.isEmpty()) {
-            int currentNode = queue.poll();
-
-            if (currentNode == end) {
-                return distance[currentNode];
+        for (Edge e : graph[node]) {
+            if (e.to != parent) {
+                dfs(e.to, node, e.weight);
             }
+        }
+    }
 
-            for (Edge e : graph[currentNode]) {
-                if (distance[e.to] == -1) {
-                    distance[e.to] = distance[currentNode] + e.weight;
-                    queue.offer(e.to);
-                }
+    static void fillParent() {
+        for (int i = 1; i <= maxLevel; i++) {
+            for (int j = 1; j <= N; j++) {
+                parent[j][i] = parent[parent[j][i - 1]][i - 1];
+                distance[j][i] = distance[j][i - 1] + distance[parent[j][i - 1]][i - 1];
+            }
+        }
+    }
+
+    static int getDistance(int a, int b) {
+        int dist = 0;
+        if (depth[a] < depth[b]) {
+            int temp = a;
+            a = b;
+            b = temp;
+        }
+
+        for (int i = maxLevel; i >= 0; i--) {
+            if (depth[a] - depth[b] >= (1 << i)) {
+                dist += distance[a][i];
+                a = parent[a][i];
             }
         }
 
-        return distance[end];
+        if (a == b) return dist;
+
+        for (int i = maxLevel; i >= 0; i--) {
+            if (parent[a][i] != parent[b][i]) {
+                dist += distance[a][i] + distance[b][i];
+                a = parent[a][i];
+                b = parent[b][i];
+            }
+        }
+
+        dist += distance[a][0] + distance[b][0];
+        return dist;
     }
 }
