@@ -1,49 +1,59 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int N, M;
+    static int[][] H;
+    static boolean[] visited;
+
+    public static void main(final String[] args) throws NumberFormatException, IOException {
+        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        
-        int N = Integer.parseInt(st.nextToken());
-        int M = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        H = new int[N][N];
+        visited = new boolean[N];
 
-        boolean[][] H = new boolean[N][N];
-
-        for(int i=0; i < M; i++){
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int u1 = Integer.parseInt(st.nextToken());
-            int u2 = Integer.parseInt(st.nextToken());
-
-            H[u1-1][u2-1] = true;
+            final int u1 = Integer.parseInt(st.nextToken());
+            final int u2 = Integer.parseInt(st.nextToken());
+            H[u1-1][u2-1] = 1;
         }
 
+        for (int i = 0; i < N; i++) {
+            if (visited[i])
+                continue;
+            dfs(i);
+        }
 
-        for(int k=0; k < H.length; k++) {
-            for (int i = 0; i < H.length; i++) {
-                if(i == k) continue;
-                for (int j = 0; j < H.length; j++) {
-                    if(H[i][k] && H[k][j]) {
-                        H[i][j] = true;
-                    }
+        int answer = 0;
+        for (int i = 0; i < N; i++) {
+            int sum = 0;
+            for (int j = 0; j < N; j++) {
+                sum += H[i][j] + H[j][i];
+            }
+            if (sum == N - 1)
+                answer++;
+        }
+
+        System.out.println(answer);
+    }
+
+    public static void dfs(final int s) {
+        if (visited[s])
+            return;
+
+        for (int i = 0; i < N; i++) {
+            if (H[s][i]==1) {
+                dfs(i);
+                for (int j = 0; j < N; j++) {
+                    H[s][j] = H[s][j] | H[i][j];  //비트 연산으로 누적 경로(키 관계) 갱신
                 }
             }
         }
-
-        int cnt=0;
-        boolean know;
-        for(int i=0; i < H.length; i++){
-            know = true;
-            for(int j=0; j < H.length; j++){
-                if(i!=j && !H[i][j] && !H[j][i]){
-                    know = false;
-                }
-            }
-            if(know) cnt++;
-        }
-
-        System.out.println(cnt);
+        visited[s] = true;
     }
 }
