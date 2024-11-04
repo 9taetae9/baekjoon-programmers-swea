@@ -1,74 +1,91 @@
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
 public class Main {
+    static final int MAX_N = 125;
+    static int[][] cave = new int[MAX_N][MAX_N];
+    static int N;
+    static int problemCount = 1;
     static int[] dx = {-1, 1, 0, 0};
     static int[] dy = {0, 0, -1, 1};
 
-    static int[][] map; //~125
-    static int N;
+    static class Node implements Comparable<Node> {
+        int x, y, cost;
 
-    public static void main(String[] args) throws Exception{
+        Node(int x, int y, int cost) {
+            this.x = x;
+            this.y = y;
+            this.cost = cost;
+        }
+
+        @Override
+        public int compareTo(Node other) {
+            return this.cost - other.cost;
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int prob = 0;
-
-
         StringBuilder sb = new StringBuilder();
-        while(true) {
-            N = Integer.parseInt(br.readLine());
-            if(N==0) break;
-            prob++;
 
-            map = new int[N][N];
-            StringTokenizer stringTokenizer;
-            for(int i=0; i<N; i++) {
-                stringTokenizer = new StringTokenizer(br.readLine());
-                for(int j=0; j<N; j++) {
-                    map[i][j] = Integer.parseInt(stringTokenizer.nextToken());
+        while (true) {
+            N = Integer.parseInt(br.readLine());
+            if (N == 0) break;
+
+            // 동굴 정보 입력
+            for (int i = 0; i < N; i++) {
+                StringTokenizer st = new StringTokenizer(br.readLine());
+                for (int j = 0; j < N; j++) {
+                    cave[i][j] = Integer.parseInt(st.nextToken());
                 }
             }
 
-            int minCost = dijkstra(0, 0);
+            int result = dijkstra();
 
-            sb.append("Problem ").append(prob).append(": ").append(minCost).append("\n");
-           
+            // 결과 저장
+            sb.append("Problem ").append(problemCount++).append(": ").append(result).append("\n");
         }
+
         System.out.print(sb);
-        
+        br.close();
     }
 
-    private static int dijkstra(int x, int y) {
-        PriorityQueue<int[]> queue = new PriorityQueue<>((a, b) -> Integer.compare(a[2], b[2]));
-        int[][] costs = new int[N][N];
+    static int dijkstra() {
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        boolean[][] visited = new boolean[N][N];
+        int[][] dist = new int[N][N];
+
         for (int i = 0; i < N; i++) {
-            Arrays.fill(costs[i], Integer.MAX_VALUE);
+            Arrays.fill(dist[i], Integer.MAX_VALUE);
         }
 
-        queue.offer(new int[]{x, y, map[x][y]});
-        costs[x][y] = map[x][y];
+        pq.offer(new Node(0, 0, cave[0][0]));
+        dist[0][0] = cave[0][0];
 
-        while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int cx = current[0], cy = current[1], cost = current[2];
+        while (!pq.isEmpty()) {
+            Node current = pq.poll();
 
-            if (cx == N - 1 && cy == N - 1) {
-                return cost;
+            if (visited[current.x][current.y]) continue;
+            visited[current.x][current.y] = true;
+
+            if (current.x == N-1 && current.y == N-1) {
+                return current.cost;
             }
 
             for (int i = 0; i < 4; i++) {
-                int nx = cx + dx[i];
-                int ny = cy + dy[i];
+                int nx = current.x + dx[i];
+                int ny = current.y + dy[i];
 
                 if (nx >= 0 && nx < N && ny >= 0 && ny < N) {
-                    int newCost = cost + map[nx][ny];
-                    if (newCost < costs[nx][ny]) {
-                        costs[nx][ny] = newCost;
-                        queue.offer(new int[]{nx, ny, newCost});
+                    int newCost = current.cost + cave[nx][ny];
+                    if (newCost < dist[nx][ny]) {
+                        dist[nx][ny] = newCost;
+                        pq.offer(new Node(nx, ny, newCost));
                     }
                 }
             }
         }
-        return -1;
-    }
 
+        return dist[N-1][N-1];
+    }
 }
