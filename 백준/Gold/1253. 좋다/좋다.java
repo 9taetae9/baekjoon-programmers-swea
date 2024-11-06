@@ -2,11 +2,12 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+    static int N;
     static int[] arr;
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
 
         arr = new int[N];
 
@@ -28,27 +29,21 @@ public class Main {
 
 
     private static boolean isGoodNumber(int target, int target_idx){
-        int left = 0; int right = arr.length-1;
+        int left = 0; int right = N-1;
 
         while(left < right){
-            if(left == target_idx){
-                left++;
-                continue;
-            }
-            if(right == target_idx){
-                right--;
-                continue;
-            }
-
             int currentSum = arr[left] + arr[right];
 
-            if(currentSum == target) return true;
             if(currentSum > target){
-                right--; continue;
+                right--;
+            }else if(currentSum < target){
+                left++;
+            }else{
+                if(left == target_idx) left++;
+                else if(right == target_idx) right--;
+                else return true;
             }
-            left++;
         }
-
         return false;
     }
 }
