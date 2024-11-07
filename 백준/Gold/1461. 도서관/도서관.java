@@ -1,5 +1,7 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
     static int N; // 책 개수
@@ -19,7 +21,7 @@ public class Main {
             books[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(books);
+        Arrays.sort(books); // NlogN
 
         System.out.println(findMinimumSteps());
     }
@@ -35,16 +37,16 @@ public class Main {
         // 가장 먼 위치 확인
         int farthest = 0;
         if (lastNegativeIndex > 0 && lastNegativeIndex < N) {
-            farthest = Math.max(Math.abs(books[0]), Math.abs(books[N - 1]));
+            farthest = Math.max(Math.abs(books[0]), books[N - 1]);
         } else if (lastNegativeIndex == 0) { // 양수만 있을 때
-            farthest = Math.abs(books[N - 1]);
+            farthest = books[N - 1];
         } else { // 음수만 있을 때
-            farthest = Math.abs(books[0]);
+            farthest = -books[0];
         }
 
         // 음수 (0 ~ lastNegativeIndex 미만)
         for (int i = 0; i < lastNegativeIndex; i += M) { //M개 단위로 옮기기
-            // 가장 먼 음수 위치 편도 처리, 나머지는 왕복
+            // 가장 먼 원소의 경우 편도 처리, 나머지 왕복
             if (Math.abs(books[i]) == farthest) {
                 totalSteps += Math.abs(books[i]);
             } else {
@@ -54,7 +56,7 @@ public class Main {
 
         // 양수 (lastNegativeIndex ~ 끝)
         for (int i = N - 1; i >= lastNegativeIndex; i -= M) {
-            // 가장 먼 양수 위치 편도 처리, 나머지는 왕복
+            // 가장 먼 원소일 경우 편도 처리, 나머지 왕복
             if (books[i] == farthest) {
                 totalSteps += books[i];
             } else {
