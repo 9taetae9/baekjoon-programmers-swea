@@ -47,22 +47,17 @@ public class Main {
         // 음수 (0 ~ lastNegativeIndex 미만)
         for (int i = 0; i < lastNegativeIndex; i += M) { //M개 단위로 옮기기
             // 가장 먼 원소의 경우 편도 처리, 나머지 왕복
-            if (Math.abs(books[i]) == farthest) {
-                totalSteps += Math.abs(books[i]);
-            } else {
-                totalSteps += Math.abs(books[i]) * 2;
-            }
+            totalSteps += Math.abs(books[i]);
         }
 
         // 양수 (lastNegativeIndex ~ 끝)
         for (int i = N - 1; i >= lastNegativeIndex; i -= M) {
             // 가장 먼 원소일 경우 편도 처리, 나머지 왕복
-            if (books[i] == farthest) {
-                totalSteps += books[i];
-            } else {
-                totalSteps += books[i] * 2;
-            }
+            totalSteps += books[i];
         }
+
+        totalSteps *= 2;
+        totalSteps -= farthest;
 
         return totalSteps;
     }
