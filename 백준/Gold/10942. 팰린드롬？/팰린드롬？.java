@@ -3,8 +3,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main  {
     static int[] arr = new int[2001];
+    static boolean[][] dp = new boolean[2001][2001];
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
@@ -14,22 +15,41 @@ public class Main {
             arr[i] = Integer.parseInt(st.nextToken());
         }
 
+        initializeDp(N);
+
         StringBuilder sb = new StringBuilder();
         int M = Integer.parseInt(br.readLine());
         for(int i=0; i<M; i++){
             st = new StringTokenizer(br.readLine());
-            int ans = isPalin(Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())) ? 1 : 0;
-            sb.append(ans).append('\n');
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
+            sb.append(dp[s][e] ? 1 : 0).append('\n');
         }
 
         System.out.println(sb);
     }
 
-    private static boolean isPalin(int s, int e){
-        while(arr[s++] == arr[e--]){
-            if(s>=e) return true;
+    private static void initializeDp(int N){
+        //길이 1
+        for(int i=1; i<=N; i++){
+            dp[i][i] = true;
         }
 
-        return false;
+        //길이 2
+        for(int i=1; i<N; i++){
+            if(arr[i] == arr[i+1]) {
+                dp[i][i + 1] = true;
+            }
+        }
+
+        //길이 3 이상
+        for(int len = 3; len <= N; len++){
+            for(int start = 1; start <= N-len+1; start++){
+                int end = start+len-1;
+                if(arr[start] == arr[end] && dp[start+1][end-1]){
+                    dp[start][end] = true;
+                }
+            }
+        }
     }
 }
