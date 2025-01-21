@@ -4,15 +4,17 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 
 public class Main {
-    public static void main(String[] args) throws IOException{
-        boolean[] S = new boolean[21];
+    static boolean[] S = new boolean[21];
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+    public static void main(String[] args) throws IOException{
+
         int M = Integer.parseInt(br.readLine());
-        int n = 0;
+
         for(int i=0; i < M; i++){
             String[] query = br.readLine().split(" ");
+            int n = 0;
             if(query.length == 2){
                 n = Integer.parseInt(query[1]);
             }
