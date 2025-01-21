@@ -1,40 +1,44 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.*;
+import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        BitSet S = new BitSet(21);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+//        StringBuilder sb = new StringBuilder();
+
+        int S = 0; // 비트마스크
 
         int M = Integer.parseInt(br.readLine());
 
         for (int i = 0; i < M; i++) {
+//            StringTokenizer st = new StringTokenizer(br.readLine());
+//            String cmd = st.nextToken();
+//            int idx = st.hasMoreTokens() ? Integer.parseInt(st.nextToken()) - 1 : -1;
             String[] query = br.readLine().split(" ");
 
             switch (query[0]) {
                 case "all" -> {
-                    S.set(1, 21); // 1 ~ 20 까지 모든 비트 1로 설정
+                    S = (1<<21) - 1;// 1 ~ 20 까지 모든 비트 1로 설정
 
                     continue; // 1 ~ 20 까지 모든 비트 1로 설정
                 }
                 case "empty" -> {
-                    S.clear();
+                    S = 0;
                     continue;
                 }
             }
 
             int n = Integer.parseInt(query[1]);
+            int mask = 1 << n;
+
             switch (query[0]){
-                case "add" -> S.set(n);
-                case "remove" -> S.clear(n);
-                case "check" -> sb.append(S.get(n) ? 1 : 0).append('\n');
-                case "toggle" -> S.flip(n);
+                case "add" -> S |= mask; // n번쨰 비트 1로 설정
+                case "remove" -> S &= ~mask; //n번째 비트 0으로 설정
+                case "check" -> bw.write((S & mask) != 0 ? "1\n" : "0\n");// n번째 비트 확인
+                case "toggle" -> S ^= mask; // n 번째 비트 뒤집기
             }
         }
-        System.out.println(sb);
+        bw.flush();
     }
 }
