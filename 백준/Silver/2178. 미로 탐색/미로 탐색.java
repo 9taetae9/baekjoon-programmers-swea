@@ -16,17 +16,17 @@ public class Main {
         int N = Integer.parseInt(st.nextToken());
         int M = Integer.parseInt(st.nextToken());
 
-        boolean[][] arr = new boolean[N][M];
+        int[][] arr = new int[N][M];
         for(int i=0; i<N; i++){
             String line = br.readLine();
             for(int j=0; j<M; j++){
-                arr[i][j] = line.charAt(j) == '1';
+                arr[i][j] = line.charAt(j) - '0';
             }
         }
 
         Queue<int[]> queue = new ArrayDeque<>();
         queue.offer(new int[]{0,0,1});
-        arr[0][0] = false;
+        arr[0][0] = 0;
 
         int minCnt = 10000;
         while(!queue.isEmpty()){
@@ -42,12 +42,12 @@ public class Main {
                     continue;
                 }
 
-                if(nextX < 0 || nextX >= N || nextY < 0 || nextY >= M || !arr[nextX][nextY]){
+                if(nextX < 0 || nextX >= N || nextY < 0 || nextY >= M || arr[nextX][nextY] != 1){
                     continue;
                 }
 
                 queue.offer(new int[]{nextX,nextY,nextCnt});
-                arr[nextX][nextY] = false;
+                arr[nextX][nextY] = 0;
             }
         }
 
