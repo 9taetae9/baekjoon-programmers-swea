@@ -3,37 +3,48 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
-
 public class Main {
+    static final List<Integer> AllNumbers =
+            IntStream.rangeClosed(1,20)
+                    .boxed()
+                    .collect(Collectors.toList());
+
+    static Set<Integer> S = new HashSet<>(20);
     public static void main(String[] args) throws IOException {
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
-
-        int S = 0; // 비트마스크
 
         int M = Integer.parseInt(br.readLine());
 
         for (int i = 0; i < M; i++) {
             String[] query = br.readLine().split(" ");
 
-            switch (query[0]) {
-                case "all" :
-                    S = (1<<21) - 1;// 1 ~ 20 까지 모든 비트 1로 설정
-                    continue; // 1 ~ 20 까지 모든 비트 1로 설정
-                case "empty" :
-                    S = 0;
-                    continue;
+            if(query[0].equals("all")){
+                S.addAll(AllNumbers);
+                continue;
+            }
+            if(query[0].equals("empty")){
+                S.clear();
+                continue;
             }
 
-            int n = Integer.parseInt(query[1]);
-            int mask = 1 << n;
-
+            Integer n = Integer.parseInt(query[1]);
             switch (query[0]){
-                case "add" : S |= mask; break;// n번쨰 비트 1로 설정
-                case "remove" : S &= ~mask; break; //n번째 비트 0으로 설정
-                case "check" : sb.append((S & mask) != 0 ? 1: 0).append('\n'); break;
-                case "toggle" : S ^= mask; break;// n 번째 비트 뒤집기
+                case "add":
+                    S.add(n);
+                    break;
+                case "remove":
+                    S.remove(n);
+                    break;
+                case "check" :
+                    sb.append(S.contains(n) ? "1\n" : "0\n");
+                    break;
+                case "toggle":
+                    if(S.contains(n)){
+                        S.remove(n);
+                    }else S.add(n);
+                    break;
             }
         }
         System.out.println(sb);
