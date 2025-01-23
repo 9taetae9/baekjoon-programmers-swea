@@ -1,54 +1,72 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class Solution {
-    public int solution(int[][] points, int[][] routes) {
-        Map<String, Integer> countMap = new HashMap<>(); // "time_r_c"를 키로 사용
-        int collision = 0;
+class Point{
+  int x, y;
+  public Point(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
 
-        for (int i = 0; i < routes.length; i++) {
-            int time = 0; // 각 로봇마다 개별 시간 추적
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Point point = (Point) o;
+    return x == point.x && y == point.y;
+  }
 
-            for (int j = 0; j < routes[i].length - 1; j++) {
-                int[] start = points[routes[i][j] - 1];
-                int[] end = points[routes[i][j + 1] - 1];
+  @Override
+  public int hashCode() {
+    return Objects.hash(x, y);
+  }
+}
 
-                int curR = start[0], curC = start[1];
-                int nextR = end[0], nextC = end[1];
+ class Solution {
+  Map<Integer, Point> pointMap = new HashMap<>();
+  Map<String, Integer> timePosMap = new HashMap<>();
+  int answer = 0;
+  public int solution(int[][] points, int[][] routes) {
 
-                // r 좌표 이동
-                while (curR != nextR) {
-                    String key = time + "_" + curR + "_" + curC; // 고유한 키 생성
-                    countMap.put(key, countMap.getOrDefault(key, 0) + 1);
-                    if (countMap.get(key) == 2) { // 충돌 조건 (2대 이상 로봇이 모이면 위험)
-                        collision++;
-                    }
-                    curR += (curR < nextR) ? 1 : -1;
-                    time++;
-                }
 
-                // c 좌표 이동
-                while (curC != nextC) {
-                    String key = time + "_" + curR + "_" + curC;
-                    countMap.put(key, countMap.getOrDefault(key, 0) + 1);
-                    if (countMap.get(key) == 2) {
-                        collision++;
-                    }
-                    curC += (curC < nextC) ? 1 : -1;
-                    time++;
-                }
-            }
-
-            // 마지막 포인트 체크
-            int lastR = points[routes[i][routes[i].length - 1] - 1][0];
-            int lastC = points[routes[i][routes[i].length - 1] - 1][1];
-            String key = time + "_" + lastR + "_" + lastC;
-            countMap.put(key, countMap.getOrDefault(key, 0) + 1);
-            if (countMap.get(key) == 2) {
-                collision++;
-            }
-        }
-
-        return collision;
+    for(int i = 0; i<points.length; i++){
+      pointMap.put(i + 1, new Point(points[i][0], points[i][1]));
     }
+
+    for(int i = 0; i<routes.length; i++){
+      simulate(routes[i]);
+    }
+
+    return answer;
+  }
+
+  void simulate(int[] path){
+    int time = 0;
+    for(int i = 0; i<path.length - 1; i++){
+      Point start = pointMap.get(path[i]);
+      Point cur = new Point(start.x, start.y);
+      Point goal = pointMap.get(path[i + 1]);
+
+      while(!cur.equals(goal)){
+
+        recordTimePos(time, cur);
+
+        if(cur.x < goal.x) cur.x++;
+        else if(cur.x > goal.x) cur.x--;
+        else if(cur.y < goal.y) cur.y++;
+        else if(cur.y > goal.y) cur.y--;
+        time++;
+      }
+    }
+
+    recordTimePos(time, pointMap.get(path[path.length - 1]));
+
+  }
+
+  void recordTimePos(int time, Point point){
+    String key = time+"-"+point.x+"-"+point.y;
+    timePosMap.put(key, timePosMap.getOrDefault(key, 0) + 1);
+    if(timePosMap.get(key) == 2) answer++;
+  }
 }
