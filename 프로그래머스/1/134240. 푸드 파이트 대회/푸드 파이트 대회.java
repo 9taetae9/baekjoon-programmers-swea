@@ -1,19 +1,13 @@
-import java.util.*;
-
 class Solution {
     public String solution(int[] food) {
         StringBuilder sb = new StringBuilder();
-        StringBuilder sb_temp;
-        for(int i=0; i<food.length; i++){
-            int num = food[i]/2;
-            sb.append(String.valueOf(i).repeat(num));
+        
+        for(int i=1; i<food.length; i++){
+            sb.append(Integer.toString(i).repeat(food[i]/2));
         }
-        sb_temp = new StringBuilder(sb);
-        sb.append("0");
-        sb.append(sb_temp.reverse());
         
-        
-        
-        return sb.toString();
+        StringBuilder sbR = new StringBuilder(sb);
+
+        return sb.append(0).append(sbR.reverse()).toString();
     }
 }
