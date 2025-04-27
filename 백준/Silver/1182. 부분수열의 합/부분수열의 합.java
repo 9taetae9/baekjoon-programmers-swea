@@ -4,41 +4,39 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    StringTokenizer st;
-    static int n, target;
-    int[] arr;
 
-    static int cnt;
-    void solution() throws IOException {
-        st = new StringTokenizer(br.readLine());
-        n = Integer.parseInt(st.nextToken());
+    static int[] arr;
+    static int N;
+    static int target;
+    static int cnt=0;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
         target = Integer.parseInt(st.nextToken());
 
-        arr = new int[n];
+        arr = new int[N];
+
         st = new StringTokenizer(br.readLine());
-        for(int i=0; i<n; i++){
+        for (int i = 0; i < N; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        findNumTargetSubsequence(0, 0, 0);
+        backtrack(0, 0);
+        if(target == 0) cnt--;
         System.out.println(cnt);
+
     }
 
-    void findNumTargetSubsequence(int idx, int sum, int element) {
-        if(idx == arr.length){
-            if(sum == target && element > 0){
-                cnt++;
-            }
+    private static void backtrack(int start, int sum) {
+        if(start == N){
+            if(sum == target) cnt++;
             return;
         }
-        findNumTargetSubsequence(idx+1, sum+arr[idx], element+1);
-        findNumTargetSubsequence(idx+1, sum, element);
-    }
+        backtrack(start+1, sum + arr[start]);
+        backtrack(start+1, sum);
 
-    public static void main(String[] args) throws Exception {
-        new Main().solution();
     }
-
 
 }
