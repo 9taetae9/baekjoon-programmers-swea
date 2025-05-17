@@ -3,29 +3,23 @@ import java.util.*;
 class Solution {
     public int solution(int[][] board, int[] moves) {
         Deque<Integer> stack = new ArrayDeque<>();
-        Map<Integer, Deque<Integer>> map = new HashMap<>();
-        int result = 0;
-
-        for(int j=0; j<board[0].length; j++){
+        int cnt = 0;
+        for(int move : moves){
+            move--;
             for(int i=0; i<board.length; i++){
-                if(board[i][j]!=0){
-                   map.computeIfAbsent(j+1, k -> new ArrayDeque<>()).offer(board[i][j]);
+                if(board[i][move] != 0){
+                    int tmp = board[i][move];
+                    if(!stack.isEmpty() && stack.peek() == tmp){
+                        stack.pop();
+                        cnt+=2;
+                    }else{
+                        stack.push(tmp);
+                    }
+                    board[i][move] = 0;
+                    break;
                 }
             }
         }
-
-        for(int move : moves){
-            if(map.containsKey(move) && !map.get(move).isEmpty()){
-                    int item = map.get(move).poll();
-                    if(!stack.isEmpty() && stack.peek() == item){
-                        stack.pop();
-                        result+=2;
-                    }else{
-                        stack.push(item);
-                    }
-            }
-        }
-
-        return result;
+        return cnt;
     }
 }
