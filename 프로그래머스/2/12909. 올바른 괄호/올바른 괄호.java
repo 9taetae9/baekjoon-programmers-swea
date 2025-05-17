@@ -1,14 +1,17 @@
+import java.util.*;
+
 class Solution {
     boolean solution(String s) {
-        int n = 0;
+        Deque<Character> stack = new ArrayDeque<>();
         for(char c : s.toCharArray()){
-            if(c == '(') n++;
-            else n--;
-            
-            if(n < 0) return false;
+            if(c == '(') stack.push(c);
+            else if(!stack.isEmpty() && stack.peek() == '('){
+                stack.pop();
+            }else{
+                stack.push(c);
+            }
         }
         
-        return n == 0;
-        
+        return stack.isEmpty();
     }
 }
