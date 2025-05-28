@@ -1,52 +1,31 @@
-import java.util.*;
-
-class Song{
-    public int sid; //고유 아이디
-    public int cnt; //재생 횟수
-    
-    public Song(){}
-    public Song(int sid, int cnt){
-        this.sid = sid;
-        this.cnt = cnt;
-    }
-    
-    public int getSid(){
-        return sid;
-    }
-    
-}
-
+import java.util.*; 
+import java.util.stream.*;
 class Solution {
     public int[] solution(String[] genres, int[] plays) {
-        Map<String, List<Song>> genresToSongs = new HashMap<>(); //장르별 곡 리스트
-        Map<String, Integer> genresToPlays = new HashMap<>(); //각 장르별 총 횟수
+        Map<String, List<int[]>> genreMap = new HashMap<>(); //{횟수, 아이디}
+        Map<String, Integer> playMap = new HashMap<>();
+        
         for(int i=0; i<genres.length; i++){
-            String g = genres[i]; //장르
-            if(!genresToSongs.containsKey(g)){
-                genresToSongs.put(g, new ArrayList<>());
+            if(!genreMap.containsKey(genres[i])){
+                genreMap.put(genres[i], new ArrayList<>());
+                playMap.put(genres[i], 0);
             }
-            genresToSongs.get(g).add(new Song(i, plays[i]));
-            genresToPlays.put(g, genresToPlays.getOrDefault(g, 0)+plays[i]);
+            
+            genreMap.get(genres[i]).add(new int[]{plays[i], i});
+            playMap.put(genres[i], playMap.get(genres[i])+plays[i]);
         }
         
-        List<Integer> genresPlays = new ArrayList<>();
-        Map<Integer, String> playsToGenres = new HashMap<>();
-        for(Map.Entry<String, Integer> entry: genresToPlays.entrySet()){
-            genresPlays.add(entry.getValue());
-            playsToGenres.put(entry.getValue(), entry.getKey());
-        }
-        
-        Collections.sort(genresPlays);
+        Stream<Map.Entry<String,Integer>> sortedGenre = playMap.entrySet().stream().sorted((o1, o2) -> Integer.compare(o2.getValue(), o1.getValue()));
         
         List<Integer> answer = new ArrayList<>();
-        for(int i=genresPlays.size()-1; i>=0; i--){
-            String genre = playsToGenres.get(genresPlays.get(i));
-            List<Song> songs = genresToSongs.get(genre);
-            songs.sort((a, b) -> b.cnt != a.cnt ? b.cnt - a.cnt : a.sid - b.sid);
-            for(int j=0; j<songs.size() && j<2; j++){
-                answer.add(songs.get(j).getSid());
-            }
-        }
+        
+        //각 장르내에서 top2 선정
+        sortedGenre.forEach(entry -> {
+            Stream<int[]> sortedSongs = genreMap.get(entry.getKey()).stream()
+                .sorted((o1, o2) -> Integer.compare(o2[0], o1[0]))
+                .limit(2);
+            sortedSongs.forEach(song -> answer.add(song[1]));
+        });
         
         return answer.stream().mapToInt(Integer::intValue).toArray();
     }
