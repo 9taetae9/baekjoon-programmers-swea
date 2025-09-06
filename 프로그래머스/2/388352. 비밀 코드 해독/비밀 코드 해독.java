@@ -1,55 +1,50 @@
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+
+
 class Solution {
     public int solution(int n, int[][] q, int[] ans) {
-        int cnt = 0;
-        for(int a=1; a<=n; a++){
-            for(int b=a+1; b<=n; b++){
-                for(int c=b+1; c<=n; c++){
-                    for(int d=c+1; d<=n; d++){
-                        for(int e=d+1; e<=n; e++){
-                            //해당 조합이 시도와 매칭되는지 확인
-                            if(isMatch(new int[]{a,b,c,d,e}, q, ans)){
-                                cnt++;
-                            }
-                        }
-                    }
+        // 조합 리스트
+        List<Set<Integer>> candidates = new ArrayList<>();
+        combination(1, n, 5, new ArrayList<>(), candidates);
+        
+        int answer = 0;
+        for(Set<Integer> candidate : candidates){
+            if(isValid(candidate, q, ans)) answer++;
+        }
+        
+        return answer;
+    }
+    
+    
+    private void combination(int start, int end, int target, List<Integer> current, List<Set<Integer>> candidates){
+        // 종료 조건
+        if(current.size() == target){
+            candidates.add(new HashSet<>(current));
+            return ;
+        }
+        
+        for(int i=start; i<=end; i++){
+            current.add(i);
+            combination(i+1, end, target, current, candidates);
+            current.remove(current.size()-1);
+        }
+    }
+    
+    private boolean isValid(Set<Integer> candidate, int[][] q, int[] ans){
+        for(int i=0; i<q.length; i++){
+            int matchCnt = 0;
+            for(int e : q[i]){
+                if(candidate.contains(e)){
+                    matchCnt++;
                 }
             }
-        }
-        
-        return cnt;
-    }
-    
-    private boolean isMatch(int[] password, int[][] attempt, int[] ans){
-        
-        for(int i=0; i < ans.length; i++){
-            int correctCnt = getCorrectCount(password, attempt[i]);
-            if(ans[i] != correctCnt) return false;
-        }
-        
-        return true;
-    }
-    
-    private int getCorrectCount(int[] password, int[] attempt){
-        int cnt = 0;
-        int p1 = 0, p2 = 0;
-        
-        while(p1 < 5 && p2 < 5){
-            if(password[p1] == attempt[p2]) {
-                cnt++;
-                p1++; p2++;
-            }else if(password[p1] > attempt[p2]){
-                p2++;
-            }else{
-                p1++;
+            if(ans[i] != matchCnt){
+                return false;
             }
         }
-        
-        return cnt;
+        return true;
     }
-    
 }
-
-/**
-각 추축에서 가능한 조각들을 찾기 x
-가능한 비밀번호 조합을 매칭 시켜보기
-*/
