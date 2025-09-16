@@ -1,46 +1,47 @@
 import java.util.*;
+
 class Solution {
-    List<String> list = new ArrayList<>();
-    
-    private void checkRoute(int x, int y, int nextX, int nextY){
-        String p1 = "("+x+","+y+")";
-        String p2 = "("+nextX+","+nextY+")";
-        boolean visited = false;
-        for(String s : list){
-            if(s.contains(p1) && s.contains(p2)){
-                visited = true;
-                break;
+    public int solution(String dirs) {
+        int x = 0, y = 0;
+        int answer = 0;
+        
+        Set<String> visited = new HashSet<>();
+        
+        for(char c : dirs.toCharArray()){
+            int nx = x, ny = y;
+            
+            switch(c){
+                case 'U': ny = y + 1; break;
+                case 'D': ny = y - 1; break;
+                case 'L': nx = x - 1; break;
+                case 'R': nx = x + 1; break;
+                default: continue;
             }
+            
+            if(nx < -5 || nx > 5 || ny < -5 || ny > 5){
+                continue;
+            }
+            
+            String edgeKey = makeEdgeKey(x, y, nx, ny);
+            
+            if(!visited.contains(edgeKey)){
+                visited.add(edgeKey);
+                answer++;
+            }
+            
+            x = nx;
+            y = ny;
         }
-        if(!visited) list.add(p1+p2);
+        
+        return answer;
     }
     
-    public int solution(String dirs) {
-        
-        int x = 0, y = 0;
-        for(char dir : dirs.toCharArray()){
-            if(dir == 'U'){
-                if(x-1 < -5) continue;
-                int nextX = x-1, nextY = y;
-                checkRoute(x, y, nextX, nextY);
-                x = nextX; y = nextY;
-            }else if(dir == 'D'){
-                if(x+1 > 5) continue;
-                int nextX = x+1, nextY = y;
-                checkRoute(x, y, nextX, nextY);
-                x = nextX; y = nextY;
-            }else if(dir == 'R'){
-                if(y+1 > 5) continue;
-                int nextX = x, nextY = y+1;
-                checkRoute(x, y, nextX, nextY);
-                x = nextX; y = nextY;
-            }else{//L
-                if(y-1 < -5) continue;
-                int nextX = x, nextY = y-1;
-                checkRoute(x, y, nextX, nextY);
-                x = nextX; y = nextY;
-            }
+    // (x1, y1)-(x2,y2) 간선을 무방향으로 표현하는 정규화 함수
+    // 좌표 비교로 작은 쪽을 앞에 위치 시킨 문자열 반환
+    static String makeEdgeKey(int x1, int y1, int x2, int y2){
+        if(x1 < x2 || (x1 == x2 && y1 < y2)){
+            return x1 + "," + y1 +"-"+x2+","+y2;
         }
-        return list.size();
+        return x2 + "," + y2 +"-"+x1+","+y1; 
     }
 }
