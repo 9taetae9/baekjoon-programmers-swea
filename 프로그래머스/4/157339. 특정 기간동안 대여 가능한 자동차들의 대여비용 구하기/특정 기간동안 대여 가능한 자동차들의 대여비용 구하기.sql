@@ -1,0 +1,28 @@
+SELECT
+    c.CAR_ID,
+    c.CAR_TYPE,
+    FLOOR(c.DAILY_FEE * (100 - d.DISCOUNT_RATE) / 100 * 30) AS FEE
+FROM CAR_RENTAL_COMPANY_CAR c
+LEFT JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN d
+    ON c.CAR_TYPE = d.CAR_TYPE
+    AND d.DURATION_TYPE = '30일 이상'
+WHERE
+    -- 자동차 종류 필터링
+    c.CAR_TYPE IN ('세단', 'SUV')
+    
+    -- 2022-11-01 ~ 30 기간에 대여 가능한 차량 필터링
+    AND NOT EXISTS (
+        SELECT 1
+        FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY h
+        WHERE h.CAR_ID = c.CAR_ID
+            AND h.START_DATE <= '2022-11-30'
+            AND h.END_DATE >= '2022-11-01'
+    )
+    
+    AND FLOOR(c.DAILY_FEE * (100 - COALESCE(d.DISCOUNT_RATE, 0)) / 100 * 30) >= 500000
+    AND FLOOR(c.DAILY_FEE * (100 - COALESCE(d.DISCOUNT_RATE, 0)) / 100 * 30) < 2000000
+
+ORDER BY
+    FEE DESC,
+    c.CAR_TYPE ASC,
+    c.CAR_ID DESC;
