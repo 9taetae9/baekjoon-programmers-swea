@@ -1,56 +1,63 @@
 import java.util.*;
+
 class Solution {
-    static int[] dx = {-1,1,0,0};
-    static int[] dy = {0,0, -1, 1};
-    static boolean[][] visited;
+    
+    static final int[] dx = {-1,1,0,0};
+    static final int[] dy = {0,0,-1,1};
+    
+    char[][] board;
+    
     public int solution(String[] board) {
-        int rx=0, ry=0, gx=0, gy=0;
-        int verLen = board.length;
-        int horLen = board[0].length();
-        for(int i=0; i<verLen; i++){
-            for(int j=0; j<horLen; j++){
-                if(board[i].charAt(j) == 'R'){
-                    rx = i; ry = j;
-                }
-                if(board[i].charAt(j) == 'G'){
-                    gx = i; gy = j;
+        this.board = new char[board.length][board[0].length()]; 
+        for(int i = 0; i<this.board.length; i++){
+            this.board[i] = board[i].toCharArray();
+        }
+        
+        int startX = 0, startY = 0;
+        int endX = 0, endY = 0;
+        for(int i = 0; i<this.board.length; i++){
+            for(int j = 0; j < this.board[0].length; j++){
+                if(this.board[i][j] == 'R'){
+                    startX = i;
+                    startY = j;
+                }else if(this.board[i][j] == 'G'){
+                    endX = i;
+                    endY = j;
                 }
             }
         }
-    
-        return bfs(rx, ry, gx, gy, board);
-    }
-    
-    private int bfs(int x, int y, int gx, int gy, String[] board){
-        Queue<int[]> queue = new LinkedList<>();
-        queue.add(new int[]{x, y, 0});
-        visited = new boolean[board.length][board[0].length()];
-        visited[x][y] = true;
         
+        Deque<int[]> q = new ArrayDeque<>();
+        q.offer(new int[]{startX, startY, 0});
         
-        while(!queue.isEmpty()){
-            int[] curr = queue.poll();
-            if(curr[0]==gx && curr[1] == gy) return curr[2];
-            
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
             
             for(int i=0; i<4; i++){
-                int nextX = curr[0]; 
-                int nextY = curr[1];
+                int[] next = move(cur, i);
                 
-                while(nextX + dx[i] >=0 && nextX + dx[i] < board.length && nextY + dy[i] >= 0 && nextY + dy[i] < board[0].length() && board[nextX + dx[i]].charAt(nextY + dy[i]) != 'D'){
-                    nextX += dx[i];
-                    nextY += dy[i];
+                if(this.board[next[0]][next[1]] == 'G') return next[2];
+                if(this.board[next[0]][next[1]] == '.'){
+                    this.board[next[0]][next[1]] = 'x';
+                    q.offer(new int[]{next[0], next[1], next[2]});
                 }
                 
-                
-                if(!visited[nextX][nextY]){
-                    visited[nextX][nextY] = true;
-                    queue.offer(new int[]{nextX,nextY,curr[2]+1});
-                }
             }
         }
         
-        
         return -1;
+    }
+    
+    private int[] move(int[] cur, int dir){
+        int curX = cur[0];
+        int curY = cur[1];
+        
+        while(!(curX < 0 || curX >= board.length || curY < 0 || curY >= board[0].length)){
+            if(board[curX][curY] == 'D') break;
+            curX += dx[dir];
+            curY += dy[dir];
+        }
+        
+        return new int[]{curX - dx[dir], curY - dy[dir], cur[2]+1};
     }
 }
