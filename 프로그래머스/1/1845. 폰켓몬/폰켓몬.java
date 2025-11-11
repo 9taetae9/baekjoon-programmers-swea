@@ -2,14 +2,13 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] nums) {
-        HashMap<Integer, Integer> pokemon = new HashMap<>();
-        
+        Set<Integer> set = new HashSet<>();
         for(int num : nums){
-            pokemon.put(num, pokemon.getOrDefault(num, 0)+1);
+            set.add(num);
         }
         
-        int len = pokemon.size();
-        int max = nums.length / 2;
-        return Math.min(max, len);
+        int n = nums.length / 2;
+        int s = set.size();
+        return n <= s ? n : s;
     }
 }
